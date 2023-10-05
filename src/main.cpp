@@ -12,8 +12,8 @@
 #define LED_COUNT 3
   const uint8_t arLed[LED_COUNT] = {LED_3, LED_2, LED_1};
 
-#define WIFI_SSID "PunyaUpi"
-#define WIFI_PASSWORD "mamamama"
+#define WIFI_SSID "Mclaren"
+#define WIFI_PASSWORD "112223333"
 #define MQTT_BROKER "broker.emqx.io"
 #define MQTT_TOPIC_PUBLISH "esp32_darrell/data"
 #define MQTT_TOPIC_SUBSCRIBE "esp32_darrell/cmd"
@@ -73,29 +73,6 @@ void onPublishLight() {
   {
     Serial.printf("\nSafe door is closed!");
   }
-}
-
-void setup() {
-  Serial.begin(115200);
-  delay(100);
-  pinMode(LED_BUILTIN, OUTPUT);
-  for (uint8_t i=0; i<LED_COUNT; i++)
-    pinMode(arLed[i], OUTPUT);
-  Wire.begin();
-  lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire);
-  Serial.printf("Free Memory: %d\n", ESP.getFreeHeap());
-  WifiConnect();
-  dht.setup(DHT_PIN, DHTesp::DHT11);
-  mqttConnect();
-  
-  timerPublish.attach_ms(2000, onPublishMessage);
-  sendTemp.attach_ms(7000, onPublishTemperature);
-  sendHumidity.attach_ms(5000, [](){ onPublishHumidity(); });
-  sendLux.attach_ms(4000, [](){ onPublishLight(); });
-}
-
-void loop() {
-  mqtt.loop();
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int len) {
@@ -158,4 +135,27 @@ ESP.restart();
 Serial.print("System connected with IP address: ");
 Serial.println(WiFi.localIP());
 Serial.printf("RSSI: %d\n", WiFi.RSSI());
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(100);
+  pinMode(LED_BUILTIN, OUTPUT);
+  for (uint8_t i=0; i<LED_COUNT; i++)
+    pinMode(arLed[i], OUTPUT);
+  Wire.begin();
+  lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire);
+  Serial.printf("Free Memory: %d\n", ESP.getFreeHeap());
+  WifiConnect();
+  dht.setup(DHT_PIN, DHTesp::DHT11);
+  mqttConnect();
+  
+  timerPublish.attach_ms(2000, onPublishMessage);
+  sendTemp.attach_ms(7000, onPublishTemperature);
+  sendHumidity.attach_ms(5000, [](){ onPublishHumidity(); });
+  sendLux.attach_ms(4000, [](){ onPublishLight(); });
+}
+
+void loop() {
+  mqtt.loop();
 }
